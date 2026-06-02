@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { GRUPOS, GK, R32, OIT, QUAR, SEMI, COPA_START, PREMIOS, FASE_COR, REACOES, calcPts } from "./data";
+import { gruposFavoritos, terceirosFavoritos, bracketFavoritos, PREMIOS_FAVORITOS } from "./favorites";
 import { getPalpites, savePalpites, getResultados, saveResultados, getReacoes, saveReacoes } from "./storage";
 import { fetchFixtures, fetchLive, fetchStandings, processFixtures, getFaseAtual } from "./api";
 import { ADMIN_SENHA } from "./config";
@@ -744,8 +745,8 @@ function NovoView({nome, setNome, iniciar, partics, bloqueado}) {
           <p style={{color:"var(--muted)",fontSize:12,marginTop:6,lineHeight:1.5}}>12 grupos → 8 melhores terceiros → 5 prêmios → bracket completo</p>
         </div>
         <input className="field" placeholder="Seu nome..." value={nome} onChange={e=>setNome(e.target.value)} onKeyDown={e=>e.key==="Enter"&&iniciar()} autoFocus/>
-        <button className="btn-gold" style={{width:"100%",padding:"13px",fontSize:15,marginTop:10}} onClick={iniciar}>COMEÇAR AGORA →</button>
-        {partics.length > 0 && <p style={{textAlign:"center",color:"var(--muted)",fontSize:10,marginTop:10}}>Já participam: {partics.map(x=>x.nome).join(", ")}</p>}
+        <button className="btn-gold" style={{width:"100%",padding:"13px",fontSize:15,marginTop:10}} onClick={iniciar}>COMEÇAR DO ZERO →</button>
+        <div style={{display:"flex",alignItems:"center",gap:8,margin:"10px 0"}}><div style={{flex:1,height:1,background:"rgba(255,255,255,.1)"}}/><span style={{fontSize:11,color:"var(--muted)",fontFamily:"'Barlow Condensed',sans-serif"}}>OU</span><div style={{flex:1,height:1,background:"rgba(255,255,255,.1)"}}/></div><button onClick={iniciarComFavoritos} style={{width:"100%",padding:"13px",fontSize:14,background:"linear-gradient(135deg,#0d2233,#4fc3f7 50%,#0d2233)",backgroundSize:"200%",color:"#050a14",border:"none",borderRadius:8,cursor:"pointer",fontFamily:"'Bebas Neue',Impact,sans-serif",letterSpacing:".14em",boxShadow:"0 4px 20px rgba(79,195,247,.3)",transition:"all .2s"}}>⚡ PREENCHER COM FAVORITOS (ODDS REAIS)</button><div style={{marginTop:8,padding:"9px 12px",background:"rgba(79,195,247,.07)",border:"1px solid rgba(79,195,247,.2)",borderRadius:8}}><p style={{fontSize:11,color:"#4fc3f7",fontFamily:"'Barlow',sans-serif",lineHeight:1.5,margin:0}}>🎯 <strong>Bracket automático</strong> baseado nas odds reais (Polymarket + Betano Jun/2026). Favorito em cada jogo avança. Você pode editar depois!</p><div style={{display:"flex",gap:5,flexWrap:"wrap",marginTop:6}}>{[["🥇 França","17.1%"],["🥈 Espanha","16.5%"],["🥉 Inglaterra","11.2%"],["Argentina","10.5%"],["Brasil","9.0%"]].map(([t,o])=>(<span key={t} style={{fontSize:10,color:"#4fc3f7",background:"rgba(79,195,247,.1)",border:"1px solid rgba(79,195,247,.2)",borderRadius:20,padding:"2px 8px",fontFamily:"'Barlow Condensed',sans-serif"}}>{t} {o}</span>))}</div></div>{partics.length > 0 {partics.length > 0 && <p style={{textAlign:"center",color:"var(--muted)",fontSize:10,marginTop:10}}>Já participam: {partics.map(x=>x.nome).join(", ")}</p>}{partics.length > 0 && <p style={{textAlign:"center",color:"var(--muted)",fontSize:10,marginTop:10}}>Já participam: {partics.map(x=>x.nome).join(", ")}</p>} <p style={{textAlign:"center",color:"var(--muted)",fontSize:10,marginTop:10}}>Já participam: {partics.map(x=>x.nome).join(", ")}</p>}
       </div>
     </div>
   );
@@ -1090,6 +1091,16 @@ export default function App() {
     setEtapa(0); setAba("palpite");
   };
 
+  const iniciarComFavoritos = () => {
+    const n = nome.trim();
+    if(!n){alert("Digite seu nome primeiro!");return;}
+    if(palpites.find(x=>x.nome.toLowerCase()===n.toLowerCase())){alert("Nome já existe!");return;}
+    const grupos = gruposFavoritos(GRUPOS);
+    const terceiros = terceirosFavoritos(grupos, GK);
+    const bracket = bracketFavoritos(grupos, terceiros, R32, OIT, QUAR, SEMI);
+    setPalpite({nome:n,grupos,terceiros,premios:{...PREMIOS_FAVORITOS},bracket,preenchidoAutomaticamente:true});
+    setEtapa(14); setAba("palpite");
+  };
   const finalizar = async () => {
     const nova = [...palpites, {...palpite, pts:0, criadoEm:Date.now()}];
     salvarPalpites(nova);
