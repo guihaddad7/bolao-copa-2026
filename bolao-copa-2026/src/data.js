@@ -24,8 +24,8 @@ export const R32 = [
   {id:12,m:"M85",a:"1B",b:"T7",date:"28/Jun"},{id:13,m:"M86",a:"1J",b:"2H",date:"29/Jun"},
   {id:14,m:"M87",a:"1K",b:"T8",date:"30/Jun"},{id:15,m:"M88",a:"2D",b:"2G",date:"1/Jul"},
 ];
-export const OIT  = [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]];
-export const QUAR = [[0,1],[2,3],[4,5],[6,7]];
+export const OIT  = [[1,4],[0,2],[3,5],[6,7],[10,11],[8,9],[13,15],[12,14]];
+export const QUAR = [[0,1],[4,5],[2,3],[6,7]];
 export const SEMI = [[0,1],[2,3]];
 export const COPA_START = new Date("2026-06-11T19:00:00Z");
 
