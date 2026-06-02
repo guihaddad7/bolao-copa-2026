@@ -9,7 +9,7 @@ export const FIFA_2026_LEAGUE_ID = 1;
 export const SEASON = 2026;
 
 // Admin
-export const ADMIN_SENHA = "copa2026admin"; // ← MUDE ISSO!
+export const ADMIN_SENHA = "Selva2026"; // ← MUDE ISSO!
 
 // Storage keys (localStorage para Vercel)
 export const SK = {
